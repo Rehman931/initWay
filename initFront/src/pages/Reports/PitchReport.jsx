@@ -20,12 +20,10 @@ import {
   Users,
   Zap,
 } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 /* =========================================================
    CONFIG
 ========================================================= */
-
-const API_BASE_URL = "http://localhost:3000";
 
 /* =========================================================
    HELPERS
@@ -1093,7 +1091,7 @@ export default function PitchReport() {
 
         const token = getAuthToken();
 
-        const response = await fetch(`${API_BASE_URL}/api/pitch/${projectId}`, {
+        const response = await fetch(`${API_URL}/api/pitch/${projectId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -1297,9 +1295,7 @@ export default function PitchReport() {
             HERO
         ================================================= */}
 
-        <section className="relative overflow-hidden rounded-[28px] border border-zinc-200 bg-white shadow-[0_20px_70px_rgba(24,24,27,0.06)]">
-          <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-violet-100/60 blur-3xl" />
-
+        <section className="relative overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-md">
           <div className="relative grid gap-10 px-7 py-9 lg:grid-cols-[1fr_300px] lg:px-11 lg:py-12">
             <div>
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-violet-700">
@@ -1611,9 +1607,7 @@ export default function PitchReport() {
         ================================================= */}
 
         <section className="mt-20">
-          <div className="relative overflow-hidden rounded-[28px] bg-violet-600 px-7 py-9 text-white shadow-[0_20px_60px_rgba(109,40,217,0.18)] lg:px-11 lg:py-12">
-            <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-white/10 blur-3xl" />
-
+          <div className="relative overflow-hidden rounded-lg bg-violet-600 px-7 py-9 text-white shadow-md lg:px-11 lg:py-12">
             <div className="relative">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
                 <Rocket size={20} />

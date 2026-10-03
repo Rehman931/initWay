@@ -8,7 +8,7 @@ import {
   FileText,
   AlertCircle,
 } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 const GeneratingReport = () => {
   const navigate = useNavigate();
 
@@ -142,18 +142,16 @@ const GeneratingReport = () => {
           -----------------------------------------
         */
 
-        const response = await fetch(
-          "http://localhost:3000/api/verify/reportstatus",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              reportId: id,
+        const response = await fetch(`${API_URL}/api/verify/reportstatus`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            reportId: id,
 
-              /*
+            /*
                 IMPORTANT:
 
                 Send:
@@ -167,10 +165,9 @@ const GeneratingReport = () => {
                 Pitch Report
                 etc.
               */
-              reportType: type,
-            }),
-          },
-        );
+            reportType: type,
+          }),
+        });
 
         /*
           Try to parse JSON safely

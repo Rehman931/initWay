@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Loader2, AlertCircle } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 const Initializing = () => {
   const navigate = useNavigate();
   const { projectId } = useParams();
@@ -29,19 +29,16 @@ const Initializing = () => {
           return;
         }
 
-        const response = await fetch(
-          "http://localhost:3000/api/verify/status",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              projectId,
-            }),
+        const response = await fetch(`${API_URL}/api/verify/status`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        );
+          body: JSON.stringify({
+            projectId,
+          }),
+        });
 
         const data = await response.json();
 

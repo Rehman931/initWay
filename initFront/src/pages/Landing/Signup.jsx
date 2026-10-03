@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Sparkles, ArrowRight, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/register", {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,12 +102,7 @@ const Signup = () => {
       {/* =========================================
           LEFT SIDE
       ========================================== */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-violet-700 via-purple-700 to-indigo-800 text-white p-12 relative overflow-hidden">
-        {/* Background decorations */}
-        <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
-
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl" />
-
+      <div className="hidden lg:flex lg:w-1/2 bg-(--workspace-ink) text-white p-12 relative overflow-hidden">
         <div className="relative z-10 flex flex-col justify-between w-full">
           {/* Logo */}
           <div

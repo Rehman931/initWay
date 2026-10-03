@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const REPORT_HISTORY_STORAGE_KEY = "initway_report_history";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 const ReportHistory = () => {
   const navigate = useNavigate();
 
@@ -61,7 +61,7 @@ const ReportHistory = () => {
 
       setError("");
 
-      const response = await fetch("http://localhost:3000/api/report/history", {
+      const response = await fetch(`${API_URL}/api/report/history`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

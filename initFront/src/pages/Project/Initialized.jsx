@@ -13,7 +13,7 @@ import {
   ChevronRight,
   Loader2,
 } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 const Initialized = () => {
   const navigate = useNavigate();
   const { projectId } = useParams();
@@ -32,19 +32,16 @@ const Initialized = () => {
           return;
         }
 
-        const response = await fetch(
-          "http://localhost:3000/api/verify/status",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              projectId,
-            }),
+        const response = await fetch(`${API_URL}/api/verify/status`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        );
+          body: JSON.stringify({
+            projectId,
+          }),
+        });
 
         const data = await response.json();
 
@@ -90,19 +87,19 @@ const Initialized = () => {
       let endpoint = "";
 
       if (reportType === "validation") {
-        endpoint = `http://localhost:3000/api/validation/${projectId}`;
+        endpoint = `${API_URL}/api/validation/${projectId}`;
       }
 
       if (reportType === "pitch") {
-        endpoint = `http://localhost:3000/api/pitch/${projectId}`;
+        endpoint = `${API_URL}/api/pitch/${projectId}`;
       }
 
       if (reportType === "roadmap") {
-        endpoint = `http://localhost:3000/api/roadmap/${projectId}`;
+        endpoint = `${API_URL}/api/roadmap/${projectId}`;
       }
 
       if (reportType === "techstack") {
-        endpoint = `http://localhost:3000/api/techstack/${projectId}`;
+        endpoint = `${API_URL}/api/techstack/${projectId}`;
       }
 
       const response = await fetch(endpoint, {

@@ -11,7 +11,7 @@ import {
   FileText,
   AlertCircle,
 } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 const PROJECTS_STORAGE_KEY = "initway_projects";
 
 const Projects = () => {
@@ -67,7 +67,7 @@ const Projects = () => {
         setLoading(true);
         setError("");
 
-        const response = await fetch("http://localhost:3000/api/projects", {
+        const response = await fetch(`${API_URL}/api/projects`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

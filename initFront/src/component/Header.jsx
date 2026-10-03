@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 import { Bell, Menu, Sparkles, CheckCircle2 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -27,16 +27,13 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
           return;
         }
 
-        const response = await fetch(
-          "http://localhost:3000/api/verify/dashboard",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await fetch(`${API_URL}/api/verify/dashboard`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         const data = await response.json();
 
@@ -86,8 +83,8 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50">
-      <div className="h-full px-4 lg:px-6 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur border-b border-[var(--workspace-line)] z-50">
+      <div className="h-full px-4 lg:px-7 flex items-center justify-between">
         {/* =========================================
             LEFT
         ========================================== */}
@@ -99,11 +96,13 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
             onClick={onMenuClick}
             className="
               lg:hidden
-              p-2
+              p-2.5
               rounded-lg
-              hover:bg-gray-100
+              text-[var(--workspace-ink)]
+              hover:bg-[var(--workspace-canvas)]
               transition
             "
+            aria-label="Open navigation"
           >
             <Menu size={21} />
           </button>
@@ -114,8 +113,8 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
             <div
               className="
                 w-9 h-9
-                rounded-xl
-                bg-violet-600
+                rounded-lg
+                bg-[var(--workspace-ink)]
                 text-white
                 flex
                 items-center
@@ -127,10 +126,9 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
 
             <span
               className="
-                text-xl
+                text-lg
                 font-bold
-                tracking-tight
-                text-gray-900
+                text-[var(--workspace-ink)]
               "
             >
               InitWay
@@ -157,13 +155,17 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
                 p-2.5
                 rounded-xl
                 transition
-                ${showNotifications ? "bg-violet-50" : "hover:bg-gray-100"}
+                ${showNotifications ? "bg-[#f1f7df]" : "hover:bg-[var(--workspace-canvas)]"}
               `}
+              aria-label="Notifications"
+              title="Notifications"
             >
               <Bell
                 size={19}
                 className={
-                  showNotifications ? "text-violet-600" : "text-gray-600"
+                  showNotifications
+                    ? "text-[var(--workspace-ink)]"
+                    : "text-[var(--workspace-muted)]"
                 }
               />
 
@@ -176,7 +178,7 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
                   right-2
                   w-2
                   h-2
-                  bg-violet-600
+                  bg-[var(--workspace-coral)]
                   rounded-full
                   border-2
                   border-white
@@ -198,8 +200,8 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
                   max-w-[calc(100vw-2rem)]
                   bg-white
                   border
-                  border-gray-200
-                  rounded-2xl
+                  border-[var(--workspace-line)]
+                  rounded-lg
                   shadow-xl
                   shadow-gray-200/50
                   overflow-hidden
@@ -233,8 +235,8 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
                     className="
                       text-[11px]
                       font-medium
-                      text-violet-600
-                      bg-violet-50
+                      text-[var(--workspace-ink)]
+                      bg-[#f1f7df]
                       px-2
                       py-1
                       rounded-full
@@ -264,8 +266,8 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
                         w-9
                         h-9
                         rounded-xl
-                        bg-violet-50
-                        text-violet-600
+                        bg-[#f1f7df]
+                        text-[var(--workspace-ink)]
                         flex
                         items-center
                         justify-center
@@ -282,7 +284,7 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
                           Welcome to InitWay
                         </h4>
 
-                        <span className="shrink-0 w-2 h-2 bg-violet-600 rounded-full mt-1.5" />
+                        <span className="shrink-0 w-2 h-2 bg-[var(--workspace-coral)] rounded-full mt-1.5" />
                       </div>
 
                       <p
@@ -321,7 +323,7 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
                       text-xs
                       font-medium
                       text-gray-500
-                      hover:text-violet-600
+                      hover:text-[var(--workspace-ink)]
                       transition
                     "
                   >
@@ -343,7 +345,7 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
               gap-3
               pl-3
               border-l
-              border-gray-200
+              border-[var(--workspace-line)]
             "
           >
             {/* AVATAR */}
@@ -353,8 +355,8 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
                 w-9
                 h-9
                 rounded-full
-                bg-violet-100
-                text-violet-700
+                bg-[#e8f1d6]
+                text-[var(--workspace-ink)]
                 flex
                 items-center
                 justify-center
@@ -367,11 +369,11 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
             {/* USER DETAILS */}
 
             <div className="hidden sm:block">
-              <p className="text-sm font-semibold text-gray-800">
+              <p className="text-sm font-semibold text-[var(--workspace-ink)]">
                 {userProfile?.name || "User"}
               </p>
 
-              <p className="text-xs text-gray-400">Founder</p>
+              <p className="text-xs text-[var(--workspace-muted)]">Founder</p>
             </div>
           </div>
         </div>

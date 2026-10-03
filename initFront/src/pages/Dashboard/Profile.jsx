@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   User,
   Mail,
@@ -124,7 +123,7 @@ const Profile = ({ userProfile }) => {
       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         {/* Banner */}
 
-        <div className="h-32 bg-gradient-to-r from-violet-600 to-indigo-600" />
+        <div className="h-32 bg-(--workspace-ink)" />
 
         <div className="px-5 sm:px-8 pb-7">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-12">
@@ -375,17 +374,7 @@ const Profile = ({ userProfile }) => {
           CURRENT PLAN
       ========================================== */}
 
-      <div
-        className="
-        mt-6
-        bg-gradient-to-r
-        from-violet-50
-        to-indigo-50
-        border border-violet-100
-        rounded-2xl
-        p-6 sm:p-7
-      "
-      >
+      <div className="mt-6 rounded-lg border border-(--workspace-line) bg-violet-50 p-6 sm:p-7">
         <div
           className="
           flex

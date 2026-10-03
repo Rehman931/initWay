@@ -12,7 +12,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 const MainPage = () => {
   const navigate = useNavigate();
   useEffect(() => {
@@ -27,16 +27,13 @@ const MainPage = () => {
           return;
         }
 
-        const response = await fetch(
-          "http://localhost:3000/api/verify/dashboard",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await fetch(`${API_URL}/api/verify/dashboard`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         const data = await response.json();
 
@@ -117,9 +114,6 @@ const MainPage = () => {
 
       {/* Hero */}
       <section className="relative overflow-hidden pt-36">
-        {/* Background decoration */}
-        <div className="absolute left-1/2 top-20 -z-10 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-violet-100/60 blur-3xl" />
-
         <div className="mx-auto max-w-7xl px-6">
           <div className="mx-auto max-w-4xl text-center">
             {/* Badge */}
@@ -132,7 +126,7 @@ const MainPage = () => {
             <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
               Your startup idea.
               <br />
-              <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="text-[var(--workspace-coral)]">
                 Validated. Planned. Ready.
               </span>
             </h1>
@@ -174,8 +168,6 @@ const MainPage = () => {
 
           {/* Dashboard Preview */}
           <div className="relative mx-auto mt-20 max-w-6xl">
-            <div className="absolute -inset-5 rounded-[2rem] bg-gradient-to-r from-violet-200/40 via-purple-100/40 to-indigo-200/40 blur-2xl" />
-
             <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/70">
               {/* Fake browser bar */}
               <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50 px-5 py-3">
@@ -189,7 +181,7 @@ const MainPage = () => {
               </div>
 
               {/* Dashboard mockup */}
-              <div className="grid min-h-[430px] grid-cols-12">
+              <div className="grid min-h-107.5 grid-cols-12">
                 {/* Sidebar */}
                 <div className="hidden border-r border-slate-200 bg-slate-50 p-5 md:col-span-3 md:block">
                   <div className="mb-8 flex items-center gap-2 font-bold">

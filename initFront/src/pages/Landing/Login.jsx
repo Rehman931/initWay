@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Sparkles, ArrowRight } from "lucide-react";
 import { replace, useNavigate } from "react-router-dom";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 const Login = () => {
   const navigate = useNavigate();
 
@@ -34,7 +34,7 @@ const Login = () => {
     setSuccessMessage("");
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/login", {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,18 +101,10 @@ const Login = () => {
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-white transition-all duration-800 ease-in-out">
-      {/* Background decoration */}
-      <div className="absolute left-1/2 top-0 -z-0 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-violet-100/50 blur-3xl" />
-
       {/* ==========================================
           LEFT SIDE
       ========================================== */}
       <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-slate-950 p-12 text-white lg:flex">
-        {/* Purple glow */}
-        <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-violet-600/20 blur-3xl" />
-
-        <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-indigo-600/20 blur-3xl" />
-
         {/* Logo */}
         <div
           className="relative flex items-center gap-2 cursor-pointer"

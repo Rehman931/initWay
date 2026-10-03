@@ -10,8 +10,7 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 const NewProject = () => {
   const navigate = useNavigate();
@@ -89,7 +88,7 @@ const NewProject = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:3000/api/research", {
+      const response = await fetch(`${API_URL}/api/research`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

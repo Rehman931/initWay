@@ -1,1 +1,126 @@
 @import "tailwindcss";
+
+@theme {
+  --color-gray-50: #f4f7f4;
+  --color-gray-100: #e9efea;
+  --color-gray-200: #dce5de;
+  --color-gray-300: #c6d1c8;
+  --color-gray-400: #96a299;
+  --color-gray-500: #6d7a72;
+  --color-gray-600: #56635b;
+  --color-gray-700: #3f4c44;
+  --color-gray-800: #2b3831;
+  --color-gray-900: #17231f;
+  --color-gray-950: #0d1511;
+
+  --color-slate-50: #f4f7f4;
+  --color-slate-100: #e9efea;
+  --color-slate-200: #dce5de;
+  --color-slate-300: #c6d1c8;
+  --color-slate-400: #96a299;
+  --color-slate-500: #6d7a72;
+  --color-slate-600: #56635b;
+  --color-slate-700: #3f4c44;
+  --color-slate-800: #2b3831;
+  --color-slate-900: #17231f;
+  --color-slate-950: #0d1511;
+
+  --color-violet-50: #edf3e7;
+  --color-violet-100: #e0edcf;
+  --color-violet-200: #c9ed70;
+  --color-violet-300: #b1d955;
+  --color-violet-400: #8cbd41;
+  --color-violet-500: #47724f;
+  --color-violet-600: #315c3b;
+  --color-violet-700: #264a31;
+  --color-violet-800: #1c3827;
+  --color-violet-900: #17231f;
+  --color-violet-950: #101a14;
+
+  --color-indigo-50: #eef5f3;
+  --color-indigo-100: #d9e9e4;
+  --color-indigo-200: #bbd8cf;
+  --color-indigo-300: #95bdaf;
+  --color-indigo-400: #6d9e8b;
+  --color-indigo-500: #4e7e6c;
+  --color-indigo-600: #3c6555;
+  --color-indigo-700: #305044;
+  --color-indigo-800: #284139;
+  --color-indigo-900: #21352d;
+  --color-indigo-950: #172b23;
+
+  --color-purple-50: #fff2ed;
+  --color-purple-100: #ffe3d7;
+  --color-purple-200: #ffc5b1;
+  --color-purple-300: #f5a185;
+  --color-purple-400: #ed7f60;
+  --color-purple-500: #e87559;
+  --color-purple-600: #c95438;
+  --color-purple-700: #a9432f;
+  --color-purple-800: #813725;
+  --color-purple-900: #5d2a1f;
+  --color-purple-950: #371b15;
+
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.5rem;
+  --radius-3xl: 0.5rem;
+}
+
+:root {
+  color-scheme: light;
+  --workspace-canvas: #f4f7f4;
+  --workspace-ink: #17231f;
+  --workspace-accent: #c9ed70;
+  --workspace-muted: #6d7a72;
+  --workspace-line: #dce5de;
+  --workspace-coral: #e87559;
+}
+
+@layer base {
+  body {
+    min-width: 320px;
+    background: var(--workspace-canvas);
+    color: var(--workspace-ink);
+    font-family: "Segoe UI Variable", "Aptos", "Segoe UI", sans-serif;
+  }
+
+  ::selection {
+    background: var(--workspace-accent);
+    color: var(--workspace-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--workspace-coral);
+    outline-offset: 3px;
+  }
+}
+
+@keyframes workspace-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.workspace-enter {
+  animation: workspace-enter 420ms ease-out both;
+}
+
+.workspace-enter-later {
+  animation: workspace-enter 520ms 100ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

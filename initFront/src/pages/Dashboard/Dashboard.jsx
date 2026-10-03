@@ -8,7 +8,7 @@ const Dashboard = ({ setProfile, userProfile }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--workspace-canvas)]">
       {/* Header */}
       <Header
         onMenuClick={() => setSidebarOpen(!sidebarOpen)}
@@ -21,7 +21,7 @@ const Dashboard = ({ setProfile, userProfile }) => {
 
       {/* Main content */}
       <main className="pt-16 lg:pl-64 min-h-screen">
-        <div className="p-5 sm:p-6 lg:p-8">
+        <div className="p-5 sm:p-7 lg:p-9">
           <Outlet />
         </div>
       </main>

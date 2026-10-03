@@ -22,7 +22,7 @@ import {
   StyleSheet,
   PDFDownloadLink,
 } from "@react-pdf/renderer";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 /* =========================================================
    PDF STYLES
 ========================================================= */
@@ -318,7 +318,7 @@ const ValidationReport = () => {
         setError("");
 
         const response = await fetch(
-          `http://localhost:3000/api/validation/${validationId}`,
+          `${API_URL}/api/validation/${validationId}`,
         );
 
         if (!response.ok) {

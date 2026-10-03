@@ -28,7 +28,7 @@ import {
   Plug,
   CheckCircle2,
 } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 /* =========================================================
    PDF STYLES
 ========================================================= */
@@ -659,9 +659,7 @@ const TechStackReport = () => {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          `http://localhost:3000/api/techstack/${techstackId}`,
-        );
+        const response = await fetch(`${API_URL}/api/techstack/${techstackId}`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch tech stack report");
@@ -793,10 +791,6 @@ const TechStackReport = () => {
       ================================================= */}
 
       <section className="relative overflow-hidden rounded-3xl bg-gray-950 text-white p-7 sm:p-10 mb-6">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl" />
-
-        <div className="absolute -bottom-32 -left-20 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl" />
-
         <div className="relative">
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
             <div className="max-w-3xl">

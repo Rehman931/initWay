@@ -36,12 +36,10 @@ import {
   Activity,
   Headphones,
 } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 /* =========================================================
    API CONFIG
 ========================================================= */
-
-const API_BASE_URL = "http://localhost:3000";
 
 /* =========================================================
    HELPERS
@@ -474,7 +472,7 @@ const RoadmapReport = () => {
         headers.Authorization = `Bearer ${token}`;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/roadmap/${projectId}`, {
+      const response = await fetch(`${API_URL}/api/roadmap/${projectId}`, {
         method: "GET",
         headers,
       });
@@ -670,8 +668,6 @@ const RoadmapReport = () => {
         <section className="mb-8 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
           <div className="grid lg:grid-cols-[1.45fr_0.75fr]">
             <div className="relative overflow-hidden p-7 sm:p-10">
-              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-100/60 blur-3xl" />
-
               <div className="relative">
                 <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-semibold text-violet-700">
                   <Sparkles className="h-3.5 w-3.5" />
@@ -707,7 +703,7 @@ const RoadmapReport = () => {
 
             {/* SNAPSHOT */}
 
-            <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 p-7 text-white sm:p-8">
+            <div className="bg-[var(--workspace-ink)] p-7 text-white sm:p-8">
               <p className="text-xs font-semibold uppercase tracking-widest text-violet-100">
                 Roadmap Snapshot
               </p>
@@ -1185,7 +1181,7 @@ const RoadmapReport = () => {
             FINAL CTA
         ===================================================== */}
 
-        <section className="mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 p-7 text-white shadow-lg sm:p-9">
+        <section className="mb-8 overflow-hidden rounded-lg bg-[var(--workspace-ink)] p-7 text-white shadow-lg sm:p-9">
           <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
               <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-violet-100">
