@@ -1,7 +1,7 @@
 import Project from "../models/Project.js";
 import Pitch from "../models/Pitch.js";
 import Roadmap from "../models/Roadmap.js";
-import TechStack from "../models/Techstack.js";
+import TechStack from "../models/TechStack.js";
 import Validation from "../models/Validation.js";
 
 const totalReports = async (req, res) => {
