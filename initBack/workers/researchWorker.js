@@ -6,11 +6,23 @@ import Project from "../models/Project.js";
 import Internet from "../models/Internet.js";
 import User from "../models/User.js";
 
+const FLASK_URL = process.env.FLASK_URL;
+
+if (!FLASK_URL) {
+  throw new Error("FLASK_URL is not defined.");
+}
+
+if (!process.env.REDIS_URL) {
+  throw new Error("REDIS_URL is not defined.");
+}
+
 const researchWorker = new Worker(
   "research",
 
   async (job) => {
+    console.log("=================================");
     console.log("Research job received:", job.id);
+    console.log("=================================");
 
     const {
       projectId,
@@ -23,71 +35,145 @@ const researchWorker = new Worker(
       evidence,
     } = job.data;
 
+    // -----------------------------------------
     // 1. Validate job data
-    if (!projectId || !userId) {
-      throw new Error("Project ID or User ID is missing.");
+    // -----------------------------------------
+
+    if (!projectId) {
+      throw new Error("Project ID is missing.");
     }
 
-    if (!projectName || !problem || !targetCustomer || !proposedSolution) {
-      throw new Error("Required project data is missing.");
+    if (!userId) {
+      throw new Error("User ID is missing.");
     }
 
-    // 2. Check that project exists
+    if (!projectName) {
+      throw new Error("Project name is missing.");
+    }
+
+    if (!problem) {
+      throw new Error("Problem is missing.");
+    }
+
+    if (!targetCustomer) {
+      throw new Error("Target customer is missing.");
+    }
+
+    if (!proposedSolution) {
+      throw new Error("Proposed solution is missing.");
+    }
+
+    // -----------------------------------------
+    // 2. Find project
+    // -----------------------------------------
+
     const project = await Project.findById(projectId);
 
     if (!project) {
       throw new Error(`Project ${projectId} does not exist.`);
     }
 
-    // 3. Call Flask AI service
+    // -----------------------------------------
+    // 3. Verify project belongs to user
+    // -----------------------------------------
+
+    if (project.userId.toString() !== userId.toString()) {
+      throw new Error("Project does not belong to this user.");
+    }
+
+    // -----------------------------------------
+    // 4. Prepare startup context
+    // -----------------------------------------
+
+    const startupContext = {
+      projectName,
+      problem,
+      targetCustomer,
+      currentSolution: currentSolution || "Not provided",
+      proposedSolution,
+      evidence: evidence || "Not provided",
+    };
+
+    const requestData = {
+      constantquest: startupContext,
+    };
+
+    console.log("Sending research request to Flask...");
+    console.log("Flask URL:", FLASK_URL);
+
+    // -----------------------------------------
+    // 5. Call Flask
+    // -----------------------------------------
+
     let response;
 
     try {
-      response = await axios.post(
-        `${process.env.FLASK_URL}/research`,
-        {
-          constantquest: {
-            projectName,
-            problem,
-            targetCustomer,
-            currentSolution,
-            proposedSolution,
-            evidence,
-          },
-        },
-        {
-          timeout: 120000,
-        },
-      );
-    } catch (flaskError) {
-      console.error(
-        "Flask research request failed:",
-        flaskError.response?.data || flaskError.message,
-      );
+      response = await axios.post(`${FLASK_URL}/research`, requestData, {
+        timeout: 180000,
 
-      throw new Error("AI research service failed.");
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("Flask research response:", response.status);
+    } catch (error) {
+      console.error("=================================");
+      console.error("FLASK RESEARCH ERROR");
+      console.error("=================================");
+
+      console.error("STATUS:", error.response?.status);
+
+      console.error("DATA:", error.response?.data);
+
+      console.error("MESSAGE:", error.message);
+
+      // Preserve the actual Flask error
+      const status = error.response?.status;
+
+      const message =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "AI research service failed.";
+
+      if (status === 429) {
+        throw new Error(
+          "AI research service rate limit reached. Please try again later.",
+        );
+      }
+
+      throw new Error(message);
     }
 
-    // 4. Get AI response
+    // -----------------------------------------
+    // 6. Validate Flask response
+    // -----------------------------------------
+
     const aiData = response.data;
 
-    // 5. Validate AI response
-    if (!aiData?.internetdata) {
-      throw new Error("AI returned invalid research data.");
+    if (!aiData) {
+      throw new Error("Flask returned an empty response.");
     }
 
-    // 6. Save research data
-    //
-    // upsert prevents duplicate Internet documents
-    // when BullMQ retries the same job.
+    if (!aiData.internetdata) {
+      throw new Error("AI returned no internet research data.");
+    }
+
+    // -----------------------------------------
+    // 7. Save internet research
+    // -----------------------------------------
+
     await Internet.findOneAndUpdate(
       {
         projectId,
       },
+
       {
         projectId,
         internetData: aiData.internetdata,
       },
+
       {
         upsert: true,
         new: true,
@@ -97,14 +183,20 @@ const researchWorker = new Worker(
 
     console.log("Internet research saved:", projectId);
 
-    // 7. Mark project as initialized
+    // -----------------------------------------
+    // 8. Mark project initialized
+    // -----------------------------------------
+
     await Project.findByIdAndUpdate(projectId, {
       status: "initialized",
     });
 
     console.log("Project initialized:", projectId);
 
-    // 8. Return result to BullMQ
+    // -----------------------------------------
+    // 9. Return result
+    // -----------------------------------------
+
     return {
       success: true,
       projectId,
@@ -117,54 +209,55 @@ const researchWorker = new Worker(
       url: process.env.REDIS_URL,
     },
 
-    concurrency: 2,
+    // Only one research job at a time
+    concurrency: 1,
   },
 );
 
-// Job completed
+// -----------------------------------------
+// Completed
+// -----------------------------------------
+
 researchWorker.on("completed", (job) => {
-  console.log(`Research job ${job.id} completed`);
+  console.log(`Research job ${job.id} completed successfully.`);
 });
 
-// Job failed
+// -----------------------------------------
+// Failed
+// -----------------------------------------
+
 researchWorker.on("failed", async (job, error) => {
   if (!job) {
     console.error("Research job failed:", error.message);
+
     return;
   }
 
   console.error(`Research job ${job.id} failed:`, error.message);
 
-  // BullMQ retries the job automatically.
-  // Refund the chance only after the final attempt.
+  try {
+    // Mark project failed
+    await Project.findByIdAndUpdate(job.data.projectId, {
+      status: "failed",
+    });
 
-  const attemptsMade = job.attemptsMade;
-  const maxAttempts = job.opts.attempts || 1;
+    // Refund one chance
+    await User.findByIdAndUpdate(job.data.userId, {
+      $inc: {
+        totalChances: 1,
+      },
+    });
 
-  if (attemptsMade >= maxAttempts) {
-    try {
-      // Mark project as failed
-      await Project.findByIdAndUpdate(job.data.projectId, {
-        status: "failed",
-      });
-
-      // Refund one chance
-      await User.findByIdAndUpdate(job.data.userId, {
-        $inc: {
-          totalChances: 1,
-        },
-      });
-
-      console.log(
-        `Research permanently failed. Chance refunded for user ${job.data.userId}`,
-      );
-    } catch (refundError) {
-      console.error("Failed to update project/refund user:", refundError);
-    }
+    console.log(`Chance refunded for user ${job.data.userId}`);
+  } catch (refundError) {
+    console.error("Failed to mark project failed/refund chance:", refundError);
   }
 });
 
-// Worker-level error
+// -----------------------------------------
+// Worker error
+// -----------------------------------------
+
 researchWorker.on("error", (error) => {
   console.error("Research worker error:", error);
 });
