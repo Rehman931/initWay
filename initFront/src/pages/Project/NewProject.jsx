@@ -114,8 +114,6 @@ const NewProject = () => {
 
       navigate(`/projects/initializing/${data.projectId}`);
     } catch (error) {
-      console.error("Research API error:", error);
-
       setError(error.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);

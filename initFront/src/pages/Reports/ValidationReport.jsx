@@ -327,12 +327,8 @@ const ValidationReport = () => {
 
         const data = await response.json();
 
-        console.log("API Response:", data);
-
         setReport(data);
       } catch (err) {
-        console.error("Get validation report error:", err);
-
         setError(err.message || "Failed to load validation report.");
       } finally {
         setLoading(false);

@@ -89,8 +89,6 @@ const Signup = () => {
       // =========================================
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      console.error("Signup failed:", error);
-
       setError(error.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);

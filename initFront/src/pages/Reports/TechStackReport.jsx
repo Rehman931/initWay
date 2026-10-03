@@ -667,12 +667,8 @@ const TechStackReport = () => {
 
         const data = await response.json();
 
-        console.log("Tech Stack API Response:", data);
-
         setReport(data);
       } catch (err) {
-        console.error("Get tech stack report error:", err);
-
         setError(err.message || "Failed to load tech stack report.");
       } finally {
         setLoading(false);

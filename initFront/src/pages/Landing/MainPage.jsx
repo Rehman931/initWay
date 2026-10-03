@@ -21,7 +21,6 @@ const MainPage = () => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          console.log("No token found");
           navigate("/", { replace: true });
 
           return;
@@ -35,16 +34,14 @@ const MainPage = () => {
           },
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
           alert("unable to load app try again");
           navigate("/", { replace: true });
           return;
         }
         navigate("/dashboard", { replace: true });
-      } catch (error) {
-        console.error("Dashboard verification failed:", error);
+      } catch {
+        alert("Unable to load your account. Please try again.");
       }
     };
 

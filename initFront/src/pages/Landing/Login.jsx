@@ -91,8 +91,6 @@ const Login = () => {
 
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      console.error("Login failed:", error);
-
       setError(error.message || "Something went wrong while logging in.");
     } finally {
       setLoading(false);

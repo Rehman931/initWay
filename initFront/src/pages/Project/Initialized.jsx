@@ -52,9 +52,7 @@ const Initialized = () => {
         }
 
         setProjectData(data);
-      } catch (error) {
-        console.error(error);
-
+      } catch {
         alert("Unable to load project.");
 
         navigate("/projects", {
@@ -112,8 +110,6 @@ const Initialized = () => {
 
       const data = await response.json();
 
-      console.log("Report creation response:", data);
-
       if (!response.ok) {
         alert(data.message || "Unable to generate report.");
         return;
@@ -133,9 +129,7 @@ const Initialized = () => {
       navigate(`/reports/generating/${reportType}/${data.reportId}`, {
         replace: true,
       });
-    } catch (error) {
-      console.error("Generate report error:", error);
-
+    } catch {
       alert("Something went wrong. Please try again.");
     } finally {
       setCreatingReport(false);

@@ -511,8 +511,6 @@ const RoadmapReport = () => {
 
       setRoadmap(roadmapData);
     } catch (err) {
-      console.error("Roadmap API error:", err);
-
       setError(err?.message || "Unable to load roadmap.");
     } finally {
       setLoading(false);

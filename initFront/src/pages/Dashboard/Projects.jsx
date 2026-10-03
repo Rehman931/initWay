@@ -38,9 +38,7 @@ const Projects = () => {
       return parsedProjects.filter(
         (project) => normalizeStatus(project?.status) !== "failed",
       );
-    } catch (error) {
-      console.error("Unable to read projects from localStorage:", error);
-
+    } catch {
       return [];
     }
   });
@@ -96,8 +94,6 @@ const Projects = () => {
           JSON.stringify(fetchedProjects),
         );
       } catch (error) {
-        console.error("Fetch projects error:", error);
-
         if (!isMounted) return;
 
         setError(error.message || "Unable to load projects. Please try again.");

@@ -193,8 +193,6 @@ const GeneratingReport = () => {
           return;
         }
 
-        console.log("Report status:", data);
-
         /*
           -----------------------------------------
           SAVE PROJECT INFORMATION
@@ -317,7 +315,6 @@ const GeneratingReport = () => {
         */
 
         if (data.status === "generating") {
-          console.log("Report is still generating...");
           return;
         }
 
@@ -346,10 +343,7 @@ const GeneratingReport = () => {
           We simply keep polling.
         */
 
-        console.log(`Report status: ${data.status}`);
       } catch (error) {
-        console.error("Report status error:", error);
-
         if (!isMounted || hasFinishedRef.current) {
           return;
         }

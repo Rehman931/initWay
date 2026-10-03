@@ -27,9 +27,7 @@ const ReportHistory = () => {
       const parsedReports = JSON.parse(storedReports);
 
       return Array.isArray(parsedReports) ? parsedReports : [];
-    } catch (error) {
-      console.error("Unable to read report history from localStorage:", error);
-
+    } catch {
       return [];
     }
   });
@@ -70,8 +68,6 @@ const ReportHistory = () => {
 
       const data = await response.json();
 
-      console.log("Report history:", data);
-
       if (!response.ok) {
         throw new Error(data.message || "Unable to fetch report history.");
       }
@@ -93,8 +89,6 @@ const ReportHistory = () => {
         JSON.stringify(fetchedReports),
       );
     } catch (error) {
-      console.error("Report history fetch error:", error);
-
       /*
        * IMPORTANT:
        * We DON'T clear reports here.

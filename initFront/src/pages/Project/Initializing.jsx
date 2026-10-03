@@ -24,7 +24,6 @@ const Initializing = () => {
 
         // No token -> login
         if (!token) {
-          console.log("No token found in Initializing");
           navigate("/login", { replace: true });
           return;
         }
@@ -41,9 +40,6 @@ const Initializing = () => {
         });
 
         const data = await response.json();
-
-        console.log("Project status response:", response.status);
-        console.log("Project status data:", data);
 
         if (!response.ok) {
           throw new Error(data?.message || "Unable to check project status.");
@@ -86,8 +82,6 @@ const Initializing = () => {
           return;
         }
       } catch (error) {
-        console.error("Project status check failed:", error);
-
         if (stopped) return;
 
         clearInterval(intervalId);

@@ -1163,8 +1163,6 @@ export default function PitchReport() {
       } catch (err) {
         if (err.name === "AbortError") return;
 
-        console.error("Pitch report error:", err);
-
         setError(err.message || "Unable to load the pitch report.");
       } finally {
         setLoading(false);

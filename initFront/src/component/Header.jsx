@@ -21,7 +21,6 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          console.log("No token found");
           navigate("/login");
           confirm("unable to load app try again");
           return;
@@ -38,15 +37,13 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
         const data = await response.json();
 
         if (!response.ok) {
-          alert("unable to load app try again");
           navigate("/login");
-
           throw new Error(data.message || "Unable to load dashboard");
         }
 
         setProfile(data);
-      } catch (error) {
-        console.error("Dashboard verification failed:", error);
+      } catch {
+        alert("Unable to load your account. Please try again.");
       }
     };
 
