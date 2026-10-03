@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 const API_URL = import.meta.env.VITE_BACKEND_URL;
+const AI_URL import.meta.env.VITE_AI_URL;
 import { Bell, Menu, Sparkles, CheckCircle2 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -49,7 +50,7 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
   getUserData();
 
   // Wake AI service — completely independent
-  fetch(`${API_URL}/health`).catch(() => {
+  fetch(`${AI_URL}/health`).catch(() => {
     console.log("AI service is sleeping or unavailable.");
   });
 }, [navigate, setProfile]);
