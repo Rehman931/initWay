@@ -16,39 +16,43 @@ const Header = ({ onMenuClick, userProfile, setProfile }) => {
   // =========================================
 
   useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const getUserData = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-        if (!token) {
-          navigate("/login");
-          confirm("unable to load app try again");
-          return;
-        }
-
-        const response = await fetch(`${API_URL}/api/verify/dashboard`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          navigate("/login");
-          throw new Error(data.message || "Unable to load dashboard");
-        }
-
-        setProfile(data);
-      } catch {
-        alert("Unable to load your account. Please try again.");
+      if (!token) {
+        navigate("/login");
+        return;
       }
-    };
 
-    getUserData();
-  }, [navigate, setProfile]);
+      const response = await fetch(`${API_URL}/api/verify/dashboard`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        navigate("/login");
+        throw new Error(data.message || "Unable to load dashboard");
+      }
+
+      setProfile(data);
+    } catch {
+      alert("Unable to load your account. Please try again.");
+    }
+  };
+
+  getUserData();
+
+  // Wake AI service — completely independent
+  fetch(`${API_URL}/health`).catch(() => {
+    console.log("AI service is sleeping or unavailable.");
+  });
+}, [navigate, setProfile]);
 
   // =========================================
   // CLOSE NOTIFICATION WHEN CLICKING OUTSIDE
