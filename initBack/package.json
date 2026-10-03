@@ -1,13 +1,12 @@
 {
   "name": "initback",
   "version": "1.0.0",
-  "description": "",
+  "description": "InitWay backend API and background workers",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js",
-    "workers": "node server.js"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
