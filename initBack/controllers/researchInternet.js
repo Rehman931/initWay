@@ -1,7 +1,7 @@
 import Project from "../models/Project.js";
 import User from "../models/User.js";
 
-import researchQueue from "./queues/researchQueue.js";
+import researchQueue from "../queues/researchQueue.js";
 
 const researchInternet = async (req, res) => {
   try {

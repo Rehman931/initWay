@@ -2,9 +2,9 @@ import "dotenv/config";
 import axios from "axios";
 import { Worker } from "bullmq";
 
-import Project from "../../models/Project.js";
-import Internet from "../../models/Internet.js";
-import User from "../../models/User.js";
+import Project from "../models/Project.js";
+import Internet from "../models/Internet.js";
+import User from "../models/User.js";
 
 const researchWorker = new Worker(
   "research",

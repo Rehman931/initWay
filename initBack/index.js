@@ -19,11 +19,11 @@ import reportStatus from "./routes/reportStatus.route.js";
 import totalreports from "./routes/totalreports.routes.js";
 
 // Workers
-import researchWorker from "./controllers/workers/researchWorker.js";
-import pitchWorker from "./controllers/workers/pitchWorker.js";
-import roadmapWorker from "./controllers/workers/roadmapWorker.js";
-import techStackWorker from "./controllers/workers/techStackWorker.js";
-import validationWorker from "./controllers/workers/validationWorker.js";
+import researchWorker from "./workers/researchWorker.js";
+import pitchWorker from "./workers/pitchWorker.js";
+import roadmapWorker from "./workers/roadmapWorker.js";
+import techStackWorker from "./workers/techStackWorker.js";
+import validationWorker from "./workers/validationWorker.js";
 
 const app = express();
 

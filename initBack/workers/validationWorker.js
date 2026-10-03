@@ -3,10 +3,10 @@ import "dotenv/config";
 import axios from "axios";
 import { Worker } from "bullmq";
 
-import Validation from "../../models/Validation.js";
-import Project from "../../models/Project.js";
-import Internet from "../../models/Internet.js";
-import User from "../../models/User.js";
+import Validation from "../models/Validation.js";
+import Project from "../models/Project.js";
+import Internet from "../models/Internet.js";
+import User from "../models/User.js";
 
 const validationWorker = new Worker(
   "validation",

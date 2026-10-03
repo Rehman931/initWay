@@ -1,5 +1,5 @@
 import { Queue } from "bullmq";
-import redis from "../../config/redis.js";
+import redis from "../config/redis.js";
 
 const researchQueue = new Queue("research", {
   connection: redis,
