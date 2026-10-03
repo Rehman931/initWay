@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 const API_URL = import.meta.env.VITE_BACKEND_URL;
-const AI_URL import.meta.env.VITE_AI_URL;
+const AI_URL = import.meta.env.VITE_AI_URL;
 import { Bell, Menu, Sparkles, CheckCircle2 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
