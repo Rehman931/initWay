@@ -6,13 +6,7 @@ const techStackQueue = new Queue("techstack", {
   },
 
   defaultJobOptions: {
-    attempts: 3,
-
-    backoff: {
-      type: "exponential",
-      delay: 5000,
-    },
-
+    attempts: 1,
     removeOnComplete: true,
     removeOnFail: true,
   },
