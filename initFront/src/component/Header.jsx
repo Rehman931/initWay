@@ -5,6 +5,11 @@ import { Bell, Menu, Sparkles, CheckCircle2 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 
+
+console.log("========== INITWAY ENV ==========");
+console.log("API_URL:", API_URL);
+console.log("AI_URL:", AI_URL);
+console.log("=================================");
 const Header = ({ onMenuClick, userProfile, setProfile }) => {
   const navigate = useNavigate();
 
