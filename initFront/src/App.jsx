@@ -20,7 +20,7 @@ import Settings from "./pages/Dashboard/Settings";
 // =========================================
 // PROJECTS
 // =========================================
-import NewProject from "./pages/Project/Newproject";
+import NewProject from "./pages/Project/NewProject";
 import Initialized from "./pages/Project/Initialized";
 import Initializing from "./pages/Project/Initializing";
 import GeneratingReport from "./pages/Project/GeneratingReport";
