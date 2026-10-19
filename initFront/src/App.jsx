@@ -8,6 +8,7 @@ import Login from "./pages/Landing/Login";
 import Signup from "./pages/Landing/Signup";
 import MainPage from "./pages/Landing/MainPage";
 import OtpPage from "./pages/Landing/OtpPage";
+import AuthCallbackPage from "./pages/Landing/AuthCallbackPage";
 // =========================================
 // DASHBOARD
 // =========================================
@@ -54,7 +55,9 @@ const App = () => {
 
       <Route path="/signup" element={<Signup />} />
 
-      <Route path="/verify-otp" element={<OtpPage />} />
+      <Route path="/authentication" element={<OtpPage />} />
+
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
       {/* =========================================
           DASHBOARD LAYOUT

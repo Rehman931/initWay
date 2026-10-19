@@ -99,7 +99,7 @@ const Signup = () => {
         data.pendingRegistrationID,
       );
 
-      navigate("/verify-otp", { replace: true });
+      navigate("/authentication", { replace: true });
     } catch (err) {
       console.error("Signup error:", err);
 
