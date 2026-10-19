@@ -7,7 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Landing/Login";
 import Signup from "./pages/Landing/Signup";
 import MainPage from "./pages/Landing/MainPage";
-
+import OtpPage from "./pages/Landing/OtpPage";
 // =========================================
 // DASHBOARD
 // =========================================
@@ -53,6 +53,8 @@ const App = () => {
       <Route path="/login" element={<Login />} />
 
       <Route path="/signup" element={<Signup />} />
+
+      <Route path="/verify-otp" element={<OtpPage />} />
 
       {/* =========================================
           DASHBOARD LAYOUT
