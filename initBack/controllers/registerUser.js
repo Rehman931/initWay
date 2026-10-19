@@ -1,8 +1,8 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import redis from "../../config/redis.js";
-import supabase from "../../config/supabase.js";
+import redis from "../config/redis.js";
+import supabase from "../config/supabase.js";
 
 const completeSignup = async (req, res) => {
   try {
