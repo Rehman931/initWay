@@ -32,6 +32,7 @@ const Signup = () => {
   };
 
   // HANDLE SIGNUP
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -39,13 +40,21 @@ const Signup = () => {
 
     setError("");
 
-    // Password validation
-    if (formData.password !== formData.confirmPassword) {
+    const name = formData.name.trim();
+    const email = formData.email.trim().toLowerCase();
+    const password = formData.password;
+
+    if (!name) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    if (password !== formData.confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (password.length < 6) {
       setError("Password must be at least 6 characters.");
       return;
     }
@@ -53,62 +62,92 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/userexist`, {
+      // 1. Create a temporary registration record in your backend.
+      const apiBase = API_URL?.replace(/\/+$/, "");
+
+      if (!apiBase) {
+        throw new Error("Backend URL is not configured.");
+      }
+
+      const response = await fetch(`${apiBase}/api/auth/userexist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim().toLowerCase(),
-          password: formData.password,
+          name,
+          email,
+          password,
         }),
       });
 
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Unable to process signup. Please try again.",
-        );
+        throw new Error(data.message || "Unable to start registration.");
       }
 
       if (!data.pendingRegistrationID) {
-        throw new Error("Pending registration ID was not returned.");
+        throw new Error("Backend did not return a pending registration ID.");
       }
 
-      // Send the OTP using Supabase.
-      const { error: otpError } = await supabase.auth.signInWithOtp({
-        email: formData.email.trim().toLowerCase(),
-      });
+      // 2. Build the email confirmation callback URL.
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
 
-      if (otpError) {
-        throw new Error(
-          otpError.message || "Unable to send verification code.",
-        );
-      }
-
-      // Save signup details only after the OTP request succeeds.
-      sessionStorage.setItem(
-        "signupEmail",
-        formData.email.trim().toLowerCase(),
+      callbackUrl.searchParams.set(
+        "pendingRegistrationID",
+        data.pendingRegistrationID,
       );
 
+      // 3. Save the pending ID before requesting the email.
+      // The callback URL also carries it if the email opens in a new tab.
+      sessionStorage.setItem("signupEmail", email);
       sessionStorage.setItem(
         "pendingRegistrationID",
         data.pendingRegistrationID,
       );
 
-      navigate("/authentication", { replace: true });
+      localStorage.setItem("pendingRegistrationID", data.pendingRegistrationID);
+
+      // 4. Create the Supabase Auth user and send a confirmation link.
+      const { data: authData, error: signupError } = await supabase.auth.signUp(
+        {
+          email,
+          password,
+          options: {
+            emailRedirectTo: callbackUrl.toString(),
+            data: {
+              name,
+            },
+          },
+        },
+      );
+
+      if (signupError) {
+        throw new Error(signupError.message);
+      }
+
+      if (!authData.user) {
+        throw new Error(
+          "Supabase did not return a user. Please try again later.",
+        );
+      }
+
+      // With email confirmation enabled, a session is normally null
+      // until the user confirms the email.
+      navigate("/check-email", { replace: true });
     } catch (err) {
       console.error("Signup error:", err);
 
-      if (err instanceof TypeError) {
+      const message = err?.message || "";
+
+      if (/rate limit|too many requests|429/i.test(message)) {
         setError(
-          "Unable to connect to the server. Please check your internet connection and try again.",
+          "Too many verification emails have been requested. " +
+            "Please wait before trying again.",
         );
       } else {
-        setError(err.message || "Something went wrong. Please try again.");
+        setError(message || "Signup failed. Please try again.");
       }
     } finally {
       setLoading(false);

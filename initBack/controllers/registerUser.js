@@ -25,11 +25,18 @@ const completeSignup = async (req, res) => {
     const accessToken = authHeader.split(" ")[1];
 
     // 1. Verify the Supabase access token
+
     const { data, error } = await supabase.auth.getUser(accessToken);
 
     if (error || !data.user || !data.user.email) {
       return res.status(401).json({
         message: "Invalid or expired Supabase session.",
+      });
+    }
+
+    if (!data.user.email_confirmed_at) {
+      return res.status(403).json({
+        message: "Please confirm your email before completing signup.",
       });
     }
 

@@ -70,7 +70,25 @@ export default function AuthCallbackPage() {
 
         if (!session?.access_token || !session.user?.email) {
           throw new Error(
-            "Supabase did not return a verified session. Please open the newest confirmation email link.",
+            "Supabase did not return a session. Please open the confirmation link again.",
+          );
+        }
+
+        // Verify the session token with Supabase.
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser(session.access_token);
+
+        if (userError || !user) {
+          throw new Error(
+            userError?.message || "Unable to verify your Supabase account.",
+          );
+        }
+
+        if (!user.email_confirmed_at) {
+          throw new Error(
+            "Your email has not been confirmed. Please use the confirmation link.",
           );
         }
 
