@@ -28,59 +28,55 @@ const checkUser = async (req, res) => {
       });
     }
 
-    if (!process.env.EMAIL_HASH_SECRET) {
+    const emailHashSecret = process.env.EMAIL_HASH_SECRET;
+
+    if (!emailHashSecret) {
       throw new Error("EMAIL_HASH_SECRET is not configured.");
     }
 
-    // 3. Normalize the input
+    // 3. Normalize input
     const normalizedName = name.trim();
     const normalizedEmail = email.trim().toLowerCase();
 
     // 4. Check whether the user already exists
-    const userExist = await User.findOne({
+    const existingUser = await User.findOne({
       email: normalizedEmail,
     });
 
-    if (userExist) {
+    if (existingUser) {
       return res.status(409).json({
         message: "User already exists. Please log in.",
       });
     }
 
-    // 5. Hash the password
+    // 5. Hash password before temporary storage
     const hashpass = await bcrypt.hash(password, 10);
 
-    // 6. Generate an HMAC from the email
+    // 6. Generate an HMAC of the normalized email
     const emailHash = crypto
-      .createHmac("sha256", process.env.EMAIL_HASH_SECRET)
+      .createHmac("sha256", emailHashSecret)
       .update(normalizedEmail)
       .digest("hex");
 
-    // 7. Use the email hash as the pending registration key
-    const pendingRegistrationID = `userPending-ID:${emailHash}`;
+    // 7. Use only the hash as the registration ID.
+    // completeSignup adds the "userPending-ID:" prefix.
+    const pendingRegistrationID = emailHash;
+    const redisKey = `userPending-ID:${pendingRegistrationID}`;
 
-    // 8. Check whether pending data already exists
-    const findRedis = await redis.get(pendingRegistrationID);
-
-    if (findRedis) {
-      // Delete the previous pending signup
-      await redis.del(pendingRegistrationID);
-    }
-
-    // 9. Store the new pending signup for five minutes
+    // 8. Store pending signup for 15 minutes.
+    // ioredis syntax: SET key value EX seconds
     await redis.set(
-      pendingRegistrationID,
+      redisKey,
       JSON.stringify({
         name: normalizedName,
         email: normalizedEmail,
         hashpass,
       }),
-      {
-        EX: 900,
-      },
+      "EX",
+      900,
     );
 
-    // 10. Return the registration ID
+    // 9. Return registration ID to frontend
     return res.status(200).json({
       message: "Pending registration created.",
       pendingRegistrationID,
