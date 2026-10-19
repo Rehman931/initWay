@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Sparkles, ArrowRight, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../../lib/supabase.js";
 const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -17,26 +19,23 @@ const Signup = () => {
     confirmPassword: "",
   });
 
-  // =========================================
   // HANDLE INPUT CHANGE
-  // =========================================
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
 
-    // Remove error while user is typing
     if (error) {
       setError("");
     }
   };
 
-  // =========================================
   // HANDLE SIGNUP
-  // =========================================
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
 
     setError("");
 
@@ -54,7 +53,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {
+      const response = await fetch(`${API_URL}/api/auth/userexist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,30 +65,51 @@ const Signup = () => {
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.message || "Registration failed.");
+        throw new Error(
+          data.message || "Unable to process signup. Please try again.",
+        );
       }
 
-      // =========================================
-      // SAVE JWT TOKEN
-      // =========================================
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (!data.pendingRegistrationID) {
+        throw new Error("Pending registration ID was not returned.");
       }
 
-      // Optional: store user data if backend returns it
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
+      // Send the OTP using Supabase.
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email: formData.email.trim().toLowerCase(),
+      });
+
+      if (otpError) {
+        throw new Error(
+          otpError.message || "Unable to send verification code.",
+        );
       }
 
-      // =========================================
-      // SUCCESS
-      // =========================================
-      navigate("/dashboard", { replace: true });
-    } catch (error) {
-      setError(error.message || "Something went wrong. Please try again.");
+      // Save signup details only after the OTP request succeeds.
+      sessionStorage.setItem(
+        "signupEmail",
+        formData.email.trim().toLowerCase(),
+      );
+
+      sessionStorage.setItem(
+        "pendingRegistrationID",
+        data.pendingRegistrationID,
+      );
+
+      navigate("/verify-otp", { replace: true });
+    } catch (err) {
+      console.error("Signup error:", err);
+
+      if (err instanceof TypeError) {
+        setError(
+          "Unable to connect to the server. Please check your internet connection and try again.",
+        );
+      } else {
+        setError(err.message || "Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -97,9 +117,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen bg-white flex">
-      {/* =========================================
-          LEFT SIDE
-      ========================================== */}
+      {/* LEFT SIDE */}
       <div className="hidden lg:flex lg:w-1/2 bg-(--workspace-ink) text-white p-12 relative overflow-hidden">
         <div className="relative z-10 flex flex-col justify-between w-full">
           {/* Logo */}
@@ -158,9 +176,7 @@ const Signup = () => {
         </div>
       </div>
 
-      {/* =========================================
-          RIGHT SIDE
-      ========================================== */}
+      {/* RIGHT SIDE */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
@@ -183,18 +199,18 @@ const Signup = () => {
             </p>
           </div>
 
-          {/* =========================================
-              ERROR MESSAGE
-          ========================================== */}
+          {/* ERROR MESSAGE */}
           {error && (
-            <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+            <div
+              role="alert"
+              aria-live="polite"
+              className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3"
+            >
               <p className="text-sm font-medium text-red-700">{error}</p>
             </div>
           )}
 
-          {/* =========================================
-              FORM
-          ========================================== */}
+          {/* FORM */}
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Name */}
             <div>
@@ -214,7 +230,8 @@ const Signup = () => {
                 placeholder="Enter your name"
                 required
                 autoComplete="name"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition"
+                disabled={loading}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition disabled:opacity-60"
               />
             </div>
 
@@ -236,7 +253,8 @@ const Signup = () => {
                 placeholder="you@example.com"
                 required
                 autoComplete="email"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition"
+                disabled={loading}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition disabled:opacity-60"
               />
             </div>
 
@@ -260,7 +278,8 @@ const Signup = () => {
                   required
                   minLength={6}
                   autoComplete="new-password"
-                  className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition"
+                  disabled={loading}
+                  className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition disabled:opacity-60"
                 />
 
                 <button
@@ -268,6 +287,7 @@ const Signup = () => {
                   onClick={() => setShowPassword((prev) => !prev)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   aria-label={showPassword ? "Hide password" : "Show password"}
+                  disabled={loading}
                 >
                   {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
                 </button>
@@ -294,7 +314,8 @@ const Signup = () => {
                   required
                   minLength={6}
                   autoComplete="new-password"
-                  className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition"
+                  disabled={loading}
+                  className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition disabled:opacity-60"
                 />
 
                 <button
@@ -306,6 +327,7 @@ const Signup = () => {
                       ? "Hide confirm password"
                       : "Show confirm password"
                   }
+                  disabled={loading}
                 >
                   {showConfirmPassword ? (
                     <EyeOff size={19} />
@@ -321,6 +343,7 @@ const Signup = () => {
               <input
                 type="checkbox"
                 required
+                disabled={loading}
                 className="mt-1 w-4 h-4 accent-violet-600"
               />
 
@@ -329,6 +352,7 @@ const Signup = () => {
                 <button
                   type="button"
                   className="text-violet-600 hover:text-violet-700 font-medium"
+                  onClick={() => navigate("/terms")}
                 >
                   Terms of Service
                 </button>{" "}
@@ -336,6 +360,7 @@ const Signup = () => {
                 <button
                   type="button"
                   className="text-violet-600 hover:text-violet-700 font-medium"
+                  onClick={() => navigate("/privacy")}
                 >
                   Privacy Policy
                 </button>
@@ -347,12 +372,13 @@ const Signup = () => {
             <button
               type="submit"
               disabled={loading}
+              aria-busy={loading}
               className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 disabled:bg-violet-400 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-violet-200"
             >
               {loading ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                  Creating account...
+                  Please wait, processing...
                 </>
               ) : (
                 <>

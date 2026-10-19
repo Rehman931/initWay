@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Sparkles, ArrowRight } from "lucide-react";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 const Login = () => {
   const navigate = useNavigate();
